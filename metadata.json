@@ -1,0 +1,6 @@
+{
+  "name": "CommCore AI",
+  "description": "Multi-dimensional communication mastery platform featuring onboarding architects, plan generators, execution coaches, and interactive roleplaying agents.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
