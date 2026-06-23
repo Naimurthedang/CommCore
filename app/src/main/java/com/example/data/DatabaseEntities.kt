@@ -118,3 +118,17 @@ data class RoleplayHistory(
     val timestamp: Long = System.currentTimeMillis()
 )
 
+@Entity(tableName = "recharts_telemetry")
+data class RechartsTelemetry(
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    val dayNumber: Int,
+    val confidenceScore: Float,
+    val pacingStability: Float,
+    val milestonesGained: String? = null,
+    val transcriptText: String = "",
+    val durationSeconds: Int = 0,
+    val silenceDensityPercent: Float = 0f,
+    val timestamp: Long = System.currentTimeMillis()
+)
+
+

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "115659968960",
+    "project_id": "commcore-65552",
+    "storage_bucket": "commcore-65552.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:115659968960:android:df121a6ab10538c63e7825",
+        "android_client_info": {
+          "package_name": "com.blazebull.commcore"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAkQWd7gCory2ceQOrKBFSilZ9dESF6Bcs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

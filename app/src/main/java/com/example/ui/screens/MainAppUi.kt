@@ -5210,6 +5210,11 @@ fun DashboardScreen(viewModel: CommViewModel, profile: UserProfile, triggerBrows
         }
 
         if (activeDashboardSubTab == "Core Metrics") {
+            // --- RECHARTS MULTI-SERIES CHART PLATFORM ---
+            item {
+                RechartsMilestoneProgressTracker(viewModel)
+            }
+
             // --- 2.1a 30-DAY COMMUNICATION CONFIDENCE SCORE TREND GRAPH ---
             item {
                 ConfidenceTrendChart(profile.currentConfidenceScore)
@@ -5284,6 +5289,10 @@ fun DashboardScreen(viewModel: CommViewModel, profile: UserProfile, triggerBrows
             }
         } else {
             // --- AI INSIGHTS & ROADMAPS SUB-TAB COMPONENTS ---
+            item {
+                RechartsMilestoneProgressTracker(viewModel)
+            }
+            
             item {
                 SentimentAnalysis30DaysChart()
             }
@@ -6700,7 +6709,63 @@ fun CoachChatScreen(viewModel: CommViewModel, profile: UserProfile) {
                     }
                 }
 
+                Spacer(modifier = Modifier.height(12.dp))
+                Divider(color = BorderGlass)
                 Spacer(modifier = Modifier.height(10.dp))
+
+                Text(
+                    "🎯 CALIBRATE PRACTICE TARGET ARCHETYPE",
+                    color = CyberMint,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = FontFamily.Monospace,
+                    modifier = Modifier.padding(bottom = 6.dp)
+                )
+
+                var selectedArchetypeForRegen by remember(profile.communicationArchetype) { mutableStateOf(profile.communicationArchetype) }
+
+                val archetypesToPick = listOf(
+                    "Assertive Anchor",
+                    "The Natural Commander",
+                    "The Thoughtful Strategist",
+                    "The Empathetic Introvert",
+                    "The Reluctant Mediator"
+                )
+
+                @OptIn(ExperimentalLayoutApi::class)
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    archetypesToPick.forEach { arch ->
+                        val isArchSelected = selectedArchetypeForRegen == arch
+                        Box(
+                            modifier = Modifier
+                                .background(
+                                    if (isArchSelected) CyberPurple.copy(alpha = 0.25f) else Color.Transparent,
+                                    RoundedCornerShape(4.dp)
+                                )
+                                .border(
+                                    1.dp,
+                                    if (isArchSelected) CyberPurple else BorderGlass,
+                                    RoundedCornerShape(4.dp)
+                                )
+                                .clickable {
+                                    selectedArchetypeForRegen = arch
+                                }
+                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                                .testTag("archetype_chip_${arch.lowercase().replace(" ", "_")}")
+                        ) {
+                            Text(
+                                text = arch,
+                                color = if (isArchSelected) Color.White else DarkSilver,
+                                fontSize = 10.sp,
+                                fontWeight = if (isArchSelected) FontWeight.Bold else FontWeight.Normal
+                            )
+                        }
+                    }
+                }
 
                 Button(
                     onClick = {
@@ -6709,7 +6774,7 @@ fun CoachChatScreen(viewModel: CommViewModel, profile: UserProfile) {
                             mode = viewModel.currentMode,
                             goalName = targetedGoal,
                             painPoints = profile.chosenPainPoints,
-                            archetype = profile.communicationArchetype
+                            archetype = selectedArchetypeForRegen
                         )
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = CyberPurple),
@@ -8155,6 +8220,118 @@ fun CoachChatScreen(viewModel: CommViewModel, profile: UserProfile) {
                 }
             }
 
+            // --- REAL-TIME SPEECH-TO-TEXT DIALOG FILLER WORD TRANSPARENCY SHIELD ---
+            if (viewModel.isWebSpeechActive && viewModel.chatInputText.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(6.dp))
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp)
+                        .testTag("realtime_stt_card"),
+                    colors = CardDefaults.cardColors(containerColor = MidnightSurface),
+                    border = BorderStroke(1.dp, CyberMint.copy(alpha = 0.5f))
+                ) {
+                    Column(modifier = Modifier.padding(10.dp)) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    imageVector = Icons.Default.PlayArrow,
+                                    contentDescription = null,
+                                    tint = CyberMint,
+                                    modifier = Modifier.size(13.dp)
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    "🎙️ LIVE REAL-TIME STT & FILLER SHIELD",
+                                    color = CyberMint,
+                                    fontSize = 9.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    fontFamily = FontFamily.Monospace
+                                )
+                            }
+                            
+                            val textLower = viewModel.chatInputText.lowercase()
+                            val liveFillerCount = listOf("just", "like", "sorry", "basically", "actually", "maybe", "mostly").sumOf { filler ->
+                                val regex = Regex("\\b${filler}\\b")
+                                regex.findAll(textLower).count()
+                            }
+                            
+                            if (liveFillerCount > 0) {
+                                Box(
+                                    modifier = Modifier
+                                        .background(Color.Red.copy(alpha = 0.15f), RoundedCornerShape(4.dp))
+                                        .border(0.5.dp, Color.Red, RoundedCornerShape(4.dp))
+                                        .padding(horizontal = 6.dp, vertical = 2.dp)
+                                ) {
+                                    Text(
+                                        "FILLERS DETECTED: $liveFillerCount",
+                                        color = Color.Red,
+                                        fontSize = 8.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        fontFamily = FontFamily.Monospace
+                                    )
+                                }
+                            } else {
+                                Box(
+                                    modifier = Modifier
+                                        .background(CyberMint.copy(alpha = 0.15f), RoundedCornerShape(4.dp))
+                                        .border(0.5.dp, CyberMint, RoundedCornerShape(4.dp))
+                                        .padding(horizontal = 6.dp, vertical = 2.dp)
+                                ) {
+                                    Text(
+                                        "PRISTINE AUTHORITY SOUND",
+                                        color = CyberMint,
+                                        fontSize = 8.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        fontFamily = FontFamily.Monospace
+                                    )
+                                }
+                            }
+                        }
+                        
+                        Spacer(modifier = Modifier.height(8.dp))
+                        
+                        @OptIn(ExperimentalLayoutApi::class)
+                        FlowRow(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            val words = viewModel.chatInputText.split(" ").filter { it.isNotEmpty() }
+                            words.forEach { rawWord ->
+                                val cleanWord = rawWord.lowercase().replace(Regex("[^a-z]"), "")
+                                val isFiller = cleanWord in listOf("just", "like", "sorry", "basically", "actually", "maybe", "mostly")
+                                if (isFiller) {
+                                    Box(
+                                        modifier = Modifier
+                                            .background(Color.Red.copy(alpha = 0.2f), RoundedCornerShape(3.dp))
+                                            .border(0.5.dp, Color.Red, RoundedCornerShape(3.dp))
+                                            .padding(horizontal = 4.dp, vertical = 1.dp)
+                                    ) {
+                                        Text(
+                                            text = rawWord,
+                                            color = Color.Red,
+                                            fontSize = 11.sp,
+                                            fontWeight = FontWeight.ExtraBold
+                                        )
+                                    }
+                                } else {
+                                    Text(
+                                        text = rawWord,
+                                        color = Color.White,
+                                        fontSize = 11.sp
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
@@ -8578,6 +8755,131 @@ fun LiveVoiceSimulationBar(viewModel: CommViewModel) {
                                 )
                             }
                         }
+
+                        // --- SPEECH-TO-TEXT DYNAMIC TRANSCRIPT & QUALIFIERS HIGH-LIGHT DRAWER ---
+                        if (viewModel.lastRecordedVoiceTranscript.isNotEmpty()) {
+                            Spacer(modifier = Modifier.height(14.dp))
+                            Divider(color = BorderGlass)
+                            Spacer(modifier = Modifier.height(12.dp))
+                            
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(Icons.Default.PlayArrow, contentDescription = null, tint = CyberMint, modifier = Modifier.size(16.dp))
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text(
+                                        "🎙️ NATIVE SPEECH-TO-TEXT TRANSCRIPT",
+                                        color = Color.White,
+                                        fontSize = 10.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        fontFamily = FontFamily.Monospace
+                                    )
+                                }
+                                Box(
+                                    modifier = Modifier
+                                        .background(Color.Red.copy(alpha = 0.15f), RoundedCornerShape(4.dp))
+                                        .border(0.5.dp, Color.Red, RoundedCornerShape(4.dp))
+                                        .padding(horizontal = 6.dp, vertical = 2.dp)
+                                ) {
+                                    Text(
+                                        "FILLERS: ${viewModel.lastRecordedVoiceFillerCount}",
+                                        color = Color.Red,
+                                        fontSize = 9.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        fontFamily = FontFamily.Monospace
+                                    )
+                                }
+                            }
+                            
+                            Spacer(modifier = Modifier.height(8.dp))
+                            
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(MidnightSurface, RoundedCornerShape(6.dp))
+                                    .border(1.dp, BorderGlass, RoundedCornerShape(6.dp))
+                                    .padding(12.dp)
+                            ) {
+                                Text(
+                                    "VERBATIM ON-DEVICE CAPTURE:",
+                                    color = DarkSilver,
+                                    fontSize = 8.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    fontFamily = FontFamily.Monospace,
+                                    modifier = Modifier.padding(bottom = 6.dp)
+                                )
+                                
+                                @OptIn(ExperimentalLayoutApi::class)
+                                FlowRow(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                                ) {
+                                    val words = viewModel.lastRecordedVoiceTranscript.split(" ")
+                                    words.forEach { rawWord ->
+                                        val cleanWord = rawWord.lowercase().replace(Regex("[^a-z]"), "")
+                                        val isFiller = cleanWord in listOf("just", "like", "sorry", "basically", "actually", "maybe", "mostly")
+                                        
+                                        if (isFiller) {
+                                            Box(
+                                                modifier = Modifier
+                                                    .background(Color.Red.copy(alpha = 0.18f), RoundedCornerShape(4.dp))
+                                                    .border(0.5.dp, Color.Red.copy(alpha = 0.6f), RoundedCornerShape(4.dp))
+                                                    .padding(horizontal = 5.dp, vertical = 2.dp)
+                                            ) {
+                                                Text(
+                                                    text = rawWord,
+                                                    color = Color.Red,
+                                                    fontSize = 11.sp,
+                                                    fontWeight = FontWeight.ExtraBold
+                                                )
+                                            }
+                                        } else {
+                                            Text(
+                                                text = rawWord,
+                                                color = LightSilver,
+                                                fontSize = 12.sp
+                                            )
+                                        }
+                                    }
+                                }
+                                
+                                if (viewModel.lastRecordedVoiceFillerCount > 0) {
+                                    Spacer(modifier = Modifier.height(10.dp))
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .background(Color.Red.copy(alpha = 0.08f), RoundedCornerShape(4.dp))
+                                            .padding(8.dp)
+                                    ) {
+                                        Text(
+                                            text = "🚨 **QUALIFIER CONTROL RECOMMANDATION**: We detected soft qualifiers: ${viewModel.lastRecordedVoiceFillersList.joinToString(", ")}. Avoid these modifiers to anchor your status with professional vocal standing.",
+                                            color = Color.White,
+                                            fontSize = 10.sp,
+                                            lineHeight = 14.sp
+                                        )
+                                    }
+                                } else {
+                                    Spacer(modifier = Modifier.height(10.dp))
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .background(CyberMint.copy(alpha = 0.08f), RoundedCornerShape(4.dp))
+                                            .padding(8.dp)
+                                        ) {
+                                        Text(
+                                            text = "✨ **EXECUTIVE VOCAL STANDING**: No soft modifiers detected. Your speech is framed with pristine authority.",
+                                            color = CyberMint,
+                                            fontSize = 10.sp,
+                                            lineHeight = 14.sp
+                                        )
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -8828,7 +9130,13 @@ data class ContestChallenge(
 fun CommunityScreen(viewModel: CommViewModel, profile: UserProfile) {
     val joinedList by viewModel.joinedCourses.collectAsStateWithLifecycle()
     var creatorDialogOpen by remember { mutableStateOf(false) }
-    var ecosystemTabSelected by remember { mutableStateOf("courses") } // "courses" or "contests"
+    var ecosystemTabSelected by remember { mutableStateOf("courses") } // "courses", "contests", or "live"
+    
+    // WebSocket states collected at Composable top-level level
+    val wsStatus by CommWebSocketService.status.collectAsStateWithLifecycle()
+    val wsMessages by CommWebSocketService.messages.collectAsStateWithLifecycle()
+    val liveFeeds by CommWebSocketService.liveFeeds.collectAsStateWithLifecycle()
+    var testPayloadText by remember { mutableStateOf("") }
     
     // Peer challenge card
     val dailyPeerChallenge = "Today's Peer Challenge: Record inside of Chat 2 sentences with silent pause triggers."
@@ -8839,10 +9147,13 @@ fun CommunityScreen(viewModel: CommViewModel, profile: UserProfile) {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Dual Mode Tab Switcher
+        // Triple Mode Tab Switcher
         item {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 4.dp)
+                    .horizontalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 FilterChip(
@@ -8863,6 +9174,18 @@ fun CommunityScreen(viewModel: CommViewModel, profile: UserProfile) {
                     label = { Text("🏆 RECRUITMENT ARENA", fontSize = 11.sp, fontWeight = FontWeight.Bold) },
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = GoldAccent,
+                        selectedLabelColor = MidnightBg,
+                        containerColor = MidnightSurface,
+                        labelColor = Color.Gray
+                    )
+                )
+
+                FilterChip(
+                    selected = ecosystemTabSelected == "live",
+                    onClick = { ecosystemTabSelected = "live" },
+                    label = { Text("📡 LIVE FEED & CO-PASS", fontSize = 11.sp, fontWeight = FontWeight.Bold) },
+                    colors = FilterChipDefaults.filterChipColors(
+                        selectedContainerColor = CyberMint,
                         selectedLabelColor = MidnightBg,
                         containerColor = MidnightSurface,
                         labelColor = Color.Gray
@@ -8981,7 +9304,7 @@ fun CommunityScreen(viewModel: CommViewModel, profile: UserProfile) {
                     }
                 }
             }
-        } else {
+        } else if (ecosystemTabSelected == "contests") {
             // Contests arena listing
             item {
                 Card(
@@ -9119,6 +9442,254 @@ fun CommunityScreen(viewModel: CommViewModel, profile: UserProfile) {
                             ) {
                                 Text("LAUNCH CONTEST CHALLENGE WITH STRICT TIMER", fontSize = 11.sp, fontWeight = FontWeight.Bold)
                             }
+                        }
+                    }
+                }
+            }
+        } else if (ecosystemTabSelected == "live") {
+            // Live WebSocket Monitor & Push feeds
+            item {
+                Card(
+                    colors = CardDefaults.cardColors(containerColor = MidnightSurfaceCard),
+                    border = BorderStroke(1.dp, CyberMint)
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(10.dp)
+                                        .background(
+                                            color = when (wsStatus) {
+                                                WebSocketStatus.CONNECTED -> CyberMint
+                                                WebSocketStatus.CONNECTING -> GoldAccent
+                                                WebSocketStatus.DISCONNECTED -> Color.Gray
+                                                WebSocketStatus.ERROR -> Color.Red
+                                            },
+                                            shape = CircleShape
+                                        )
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = "CO-CHANNEL STAT: ${wsStatus.name}",
+                                    color = Color.White,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    fontFamily = FontFamily.Monospace
+                                )
+                            }
+                            
+                            Button(
+                                onClick = {
+                                    if (wsStatus == WebSocketStatus.CONNECTED) {
+                                        CommWebSocketService.disconnect()
+                                    } else {
+                                        CommWebSocketService.connect()
+                                    }
+                                },
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = if (wsStatus == WebSocketStatus.CONNECTED) Color.DarkGray else CyberPurple
+                                ),
+                                shape = RoundedCornerShape(4.dp),
+                                modifier = Modifier
+                                    .height(28.dp)
+                                    .testTag("ws_toggle_connection")
+                            ) {
+                                Text(
+                                    text = if (wsStatus == WebSocketStatus.CONNECTED) "DISCONNECT" else "CONNECT",
+                                    fontSize = 9.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    fontFamily = FontFamily.Monospace,
+                                    color = Color.White
+                                )
+                            }
+                        }
+                        
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Text(
+                            text = "Connected Endpoint: wss://echo.websocket.events",
+                            color = DarkSilver,
+                            fontSize = 11.sp,
+                            fontFamily = FontFamily.Monospace
+                        )
+                        Spacer(modifier = Modifier.height(14.dp))
+                        
+                        Text(
+                            text = "TRANSMIT TELEMETRY CORE FRAME",
+                            color = CyberMint,
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Bold,
+                            fontFamily = FontFamily.Monospace
+                        )
+                        Spacer(modifier = Modifier.height(6.dp))
+                        
+                        OutlinedTextField(
+                            value = testPayloadText,
+                            onValueChange = { testPayloadText = it },
+                            placeholder = { Text("Enter mock speech metric text or system payload command...", color = Color.Gray, fontSize = 11.sp) },
+                            textStyle = TextStyle(color = Color.White, fontSize = 12.sp, fontFamily = FontFamily.Monospace),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedTextColor = Color.White,
+                                unfocusedTextColor = Color.White,
+                                focusedBorderColor = CyberMint,
+                                unfocusedBorderColor = BorderGlass,
+                                focusedContainerColor = MidnightBg,
+                                unfocusedContainerColor = MidnightBg
+                            ),
+                            maxLines = 1,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .testTag("ws_payload_input")
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        
+                        Button(
+                            onClick = {
+                                if (testPayloadText.isNotBlank()) {
+                                    CommWebSocketService.sendMessage(testPayloadText.trim())
+                                    testPayloadText = ""
+                                }
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = CyberMint),
+                            shape = RoundedCornerShape(4.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(36.dp)
+                                .testTag("ws_send_button")
+                        ) {
+                            Text("BROADCAST SPEECH FRAME PROTOCOL", color = MidnightBg, fontSize = 11.sp, fontWeight = FontWeight.Black)
+                        }
+                    }
+                }
+            }
+            
+            item {
+                Card(
+                    colors = CardDefaults.cardColors(containerColor = MidnightSurface),
+                    border = BorderStroke(1.dp, BorderGlass)
+                ) {
+                    Column(modifier = Modifier.padding(14.dp)) {
+                        Text(
+                            "RAW CO-CHANNEL DIALOG MONITOR (WEBSOCKET ECHOS)",
+                            color = GoldAccent,
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            fontFamily = FontFamily.Monospace
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        
+                        if (wsMessages.isEmpty()) {
+                            Text(
+                                "Waiting for WebSocket frame transmissions...",
+                                color = DarkSilver,
+                                fontSize = 11.sp,
+                                fontFamily = FontFamily.Monospace,
+                                modifier = Modifier.padding(vertical = 4.dp)
+                            )
+                        } else {
+                            wsMessages.take(6).forEach { msg ->
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 3.dp)
+                                        .background(MidnightBg, RoundedCornerShape(4.dp))
+                                        .border(0.5.dp, BorderGlass, RoundedCornerShape(4.dp))
+                                        .padding(6.dp)
+                                ) {
+                                    Icon(Icons.Default.ArrowForward, contentDescription = null, tint = CyberMint, modifier = Modifier.size(12.dp))
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text(
+                                        text = msg,
+                                        color = Color.White,
+                                        fontSize = 10.sp,
+                                        fontFamily = FontFamily.Monospace
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            item {
+                Text(
+                    "📡 DYNAMIC COMMCORE TELEMETRY & STRATEGY STREAM",
+                    color = DarkSilver,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = FontFamily.Monospace,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
+            
+            if (liveFeeds.isEmpty()) {
+                item {
+                    Card(
+                        colors = CardDefaults.cardColors(containerColor = MidnightSurface),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Box(modifier = Modifier.padding(16.dp), contentAlignment = Alignment.Center) {
+                            Text("Activating cloud filters...", color = Color.Gray, fontSize = 12.sp)
+                        }
+                    }
+                }
+            } else {
+                items(liveFeeds, key = { it.id }) { feed ->
+                    Card(
+                        colors = CardDefaults.cardColors(containerColor = MidnightSurface),
+                        border = BorderStroke(
+                            1.dp,
+                            when (feed.severity) {
+                                "ALERT" -> CyberPurple.copy(alpha = 0.5f)
+                                "SUCCESS" -> CyberMint.copy(alpha = 0.5f)
+                                else -> BorderGlass
+                            }
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .animateItem()
+                    ) {
+                        Column(modifier = Modifier.padding(12.dp)) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Card(
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = when (feed.source) {
+                                            "AI Coach" -> CyberMint
+                                            "Peer Event" -> GoldAccent
+                                            else -> CyberPurple
+                                        }
+                                    )
+                                ) {
+                                    Text(
+                                        text = feed.source.uppercase(),
+                                        color = if (feed.source == "System Protocol") Color.White else MidnightBg,
+                                        fontSize = 9.sp,
+                                        fontWeight = FontWeight.Black,
+                                        fontFamily = FontFamily.Monospace,
+                                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                    )
+                                }
+                                Text(
+                                    text = feed.timestamp,
+                                    color = DarkSilver,
+                                    fontSize = 10.sp,
+                                    fontFamily = FontFamily.Monospace
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(6.dp))
+                            Text(
+                                text = feed.content,
+                                color = Color.White,
+                                fontSize = 12.sp
+                            )
                         }
                     }
                 }

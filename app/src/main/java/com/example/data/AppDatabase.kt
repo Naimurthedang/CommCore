@@ -97,7 +97,19 @@ interface RoleplayHistoryDao {
     suspend fun deleteRoleplayHistoryById(id: Int)
 }
 
-@Database(entities = [UserProfile::class, ChatMessage::class, BookedSession::class, JoinedCourse::class, CommunicationActionPlan::class, PeerFeedback::class, FirebaseGoal::class, RoleplayHistory::class], version = 1, exportSchema = false)
+@Dao
+interface RechartsTelemetryDao {
+    @Query("SELECT * FROM recharts_telemetry ORDER BY dayNumber ASC")
+    fun getAllTelemetryFlow(): Flow<List<RechartsTelemetry>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertTelemetry(telemetry: RechartsTelemetry)
+
+    @Query("DELETE FROM recharts_telemetry")
+    suspend fun clearAllTelemetry()
+}
+
+@Database(entities = [UserProfile::class, ChatMessage::class, BookedSession::class, JoinedCourse::class, CommunicationActionPlan::class, PeerFeedback::class, FirebaseGoal::class, RoleplayHistory::class, RechartsTelemetry::class], version = 2, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract val userProfileDao: UserProfileDao
     abstract val chatMessageDao: ChatMessageDao
@@ -107,6 +119,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract val peerFeedbackDao: PeerFeedbackDao
     abstract val firebaseGoalDao: FirebaseGoalDao
     abstract val roleplayHistoryDao: RoleplayHistoryDao
+    abstract val rechartsTelemetryDao: RechartsTelemetryDao
 
     companion object {
         @Volatile
